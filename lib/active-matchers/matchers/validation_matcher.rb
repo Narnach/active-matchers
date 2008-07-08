@@ -6,6 +6,7 @@ module ActiveMatchers
         @attributes = attributes
         @create_action = 'create'
         @new_action = 'new'
+        @unique_values = {}
       end
       
       def matches?(model)
@@ -87,6 +88,11 @@ module ActiveMatchers
         self
       end
       
+      def using_unique(attributes)
+        @unique_values = attributes
+        self
+      end
+      
       private
       
       def confirm_required
@@ -113,6 +119,10 @@ module ActiveMatchers
         
         true
       end
+      
+      def unique_value_for(attribute)
+        @unique_values[attribute] || "#{@base_attributes[attribute]} - Edit"
+      end
             
       def confirm_unique
         return true if @attributes.empty?
@@ -132,7 +142,7 @@ module ActiveMatchers
             @error = "#{@model.name} should have a value collision for #{attribute}"
             return false 
           end
-          obj.send "#{attribute.to_s}=", "#{@base_attributes[attribute]} - Edit"
+          obj.send "#{attribute.to_s}=", unique_value_for(attribute)
         end
         unless obj.valid?
           @error = "#{@model.name} should be valid without duplicate values"
