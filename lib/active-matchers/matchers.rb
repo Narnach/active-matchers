@@ -29,6 +29,15 @@ module ActiveMatchers
       ValidationMatcher.new(:length, *fields).using(@base_attributes)
     end
     
+    # Test belongs_to :comment has validation to make sure the related model exists.
+    #   Model.should validate_existence_of(:comment)
+    #
+    # This works nice in combination with the validates_existence plugin, but 
+    # also works when doing manual validation of the existence of related models.
+    def validate_existence_of(*fields)
+      ValidationMatcher.new(:existence_of, *fields).using(@base_attributes)
+    end
+    
     # Test belongs_to :parent
     #   Model.should belong_to(:parent)
     #

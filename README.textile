@@ -42,7 +42,6 @@ Test @validates_numericality_of :age@
 
 	Model.should need(:age).to_be_numeric.using(@valid_attributes)
 
-
 You can group multiple validation checks together like so:
 
   using(@valid_attributes) do
@@ -72,6 +71,13 @@ Test @has_many :items, :class_name => "CustomClass", :foreign_key => "some_id"@
     :class_name => "CustomClass", :foreign_key => "some_id")
     
 Similar testing available for has_one (@Model.should have_one@) and @has_and_belongs_to_many@ (@Model.should have_and_belong_to_many@)
+
+When you have the validates_existence plugin installed, or when you manually check the existence of a related model,
+the following will be useful:
+
+Test @validates_existence_of :parent@
+
+  Model.should validate_existence_of(:parent).using(@valid_attributes)
 
 h2. Authors
 

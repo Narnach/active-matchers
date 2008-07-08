@@ -24,6 +24,8 @@ module ActiveMatchers
           confirm_numericality
         when :unsigned
           confirm_zero_or_greater
+        when :existence_of
+          confirm_existence_of
         else
           false
         end
@@ -94,6 +96,29 @@ module ActiveMatchers
       end
       
       private
+      
+      def confirm_existence_of
+        associations = @attributes
+        associations.each do |association|
+          foreign_key = (association.to_s << '_id').to_sym
+          obj = @model.send @new_action, @base_attributes.except(foreign_key)
+          obj.send "#{foreign_key}=", 99999999
+          if obj.valid?
+            @error = "#{@model.name}.valid? should be false with a non-existent #{foreign_key}, but returned true"
+            return false
+          end
+          if obj.errors.on(foreign_key).empty?
+            @error = "#{@model.name} should have errors on #{foreign_key} when #{foreign_key} is non-existent"
+            return false
+          end
+          obj.send "#{foreign_key}=", @base_attributes[foreign_key]
+          unless obj.valid?
+            @error = "#{@model.name}.valid? should be true with a valid #{foreign_key}, but returned false"
+            return false
+          end
+        end
+        true
+      end
       
       def confirm_required
         return true if @attributes.empty?
