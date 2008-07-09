@@ -13,6 +13,9 @@ module ActiveMatchers
     # Test presence of at least one field being required
     #   Model.should need.one_of(:first_name, :last_name).using(@valid_attributes)
     # 
+    # Test validates_inclusion_of :age, :in => 0..99
+    #   Model.should need(:age).to_be_in_range(0..99).using(@valid_attributes)
+    #
     def need(*fields)
       ValidationMatcher.new(:require, *fields).using(@base_attributes)
     end

@@ -26,6 +26,8 @@ module ActiveMatchers
           confirm_zero_or_greater
         when :existence_of
           confirm_existence_of
+        when :in_range
+          confirm_in_range
         else
           false
         end
@@ -47,6 +49,12 @@ module ActiveMatchers
       
       def to_be_unsigned
         @type = :unsigned
+        self
+      end
+      
+      def to_be_in_range(range)
+        @type = :in_range
+        @range = range
         self
       end
       
@@ -96,6 +104,29 @@ module ActiveMatchers
       end
       
       private
+      
+      def confirm_in_range
+        @attributes.each do |attribute|
+          obj = @model.send @new_action, @base_attributes
+          
+          [@range.first, @range.last].each do |in_range_value|
+            obj.send "#{attribute}=", in_range_value
+            unless obj.valid?
+              @error = "#{@model.name}.valid? should be true when #{attribute} is #{in_range_value}, but returned false"
+              return false
+            end
+          end
+          
+          [@range.first - 1, @range.last + 1].each do |out_of_range_value|
+            obj.send "#{attribute}=", out_of_range_value
+            if obj.valid?
+              @error = "#{@model.name}.valid? should be false when #{attribute} is #{out_of_range_value}, but returned true"
+              return false
+            end
+          end
+        end
+        true
+      end
       
       def confirm_existence_of
         associations = @attributes
