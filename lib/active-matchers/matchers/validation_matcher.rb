@@ -139,6 +139,12 @@ module ActiveMatchers
         associations.each do |association|
           foreign_key = (association.to_s << '_id').to_sym
           obj = @model.send @new_action, @base_attributes.except(foreign_key)
+          if @options[:allow_nil] == true
+            unless obj.valid?
+              @error = "#{@model.name}.valid? should be true with a nil #{foreign_key}, but returned false"
+              return false
+            end
+          end
           if @options[:allow_zero] == true
             obj.send "#{foreign_key}=", 0
             unless obj.valid?
@@ -159,13 +165,6 @@ module ActiveMatchers
           unless obj.valid?
             @error = "#{@model.name}.valid? should be true with a valid #{foreign_key}, but returned false"
             return false
-          end
-          if @options[:allow_nil] == true
-            obj.send "#{foreign_key}=", nil
-            unless obj.valid?
-              @error = "#{@model.name}.valid? should be true with a nil #{foreign_key}, but returned false"
-              return false
-            end
           end
         end
         true
