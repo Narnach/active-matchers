@@ -7,6 +7,7 @@ module ActiveMatchers
         @create_action = 'create'
         @new_action = 'new'
         @unique_values = {}
+        @options = {}
       end
       
       def matches?(model)
@@ -63,6 +64,11 @@ module ActiveMatchers
         self
       end
       
+      def with_options(options={})
+        @options = options
+        self
+      end
+
       def if(&block)
         @if = block
         self
@@ -146,6 +152,13 @@ module ActiveMatchers
           unless obj.valid?
             @error = "#{@model.name}.valid? should be true with a valid #{foreign_key}, but returned false"
             return false
+          end
+          if @options[:allow_nil] == true
+            obj.send "#{foreign_key}=", nil
+            unless obj.valid?
+              @error = "#{@model.name}.valid? should be true with a nil #{foreign_key}, but returned false"
+              return false
+            end
           end
         end
         true

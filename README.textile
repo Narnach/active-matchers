@@ -83,6 +83,10 @@ Test @validates_existence_of :parent@
 
   Model.should validate_existence_of(:parent).using(@valid_attributes)
 
+Test @validates_existence_of :parent, :allow_nil => true@
+
+  Model.should validate_existence_of(:parent).with_options(:allow_nil=>true).using(@valid_attributes)
+
 h2. Authors
 
 Copyright (c) 2007 Pat Allan & James Healy, released under the MIT license
