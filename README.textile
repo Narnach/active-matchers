@@ -4,11 +4,11 @@ h2. Install
 
 Freelancing-god's original version:
 
-  script/plugin install http://github.com/freelancing-god/active-matchers.git
+  script/plugin install git://github.com/freelancing-god/active-matchers.git
 
 Narnach's version:
 
-  script/plugin install http://github.com/Narnach/active-matchers.git
+  script/plugin install git://github.com/Narnach/active-matchers.git
 
 Make sure, in your spec_helper.rb file, you add an include as follows:
 
